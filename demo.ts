@@ -32,3 +32,35 @@ type re1 = Pop<['a', 'b', 'c', 'd']>
 declare function PromiseAll<T extends any[]>(values:readonly[...T]):Promise<{
   [K in keyof T]: T[K] extends Promise<infer A> ? A : T[K];
 }>
+
+
+/**
+ * Type Lookup
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00062-medium-type-lookup/README.md
+ */
+
+type LookUp<U ,T> = U extends {type : T} ? U : never;
+
+
+/**
+ * Type Trim Left
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00106-medium-trimleft/README.zh-CN.md
+ */
+type TrimLeft<T> = T extends ` ${infer rest}` ? TrimLeft<rest> : T;
+type trimed = TrimLeft<'  Hello World  '>
+
+
+/**
+ * Trim
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00108-medium-trim/README.zh-CN.md
+ */
+type Blank = ' '|'\n' |'\t';
+type Trim<T> = T extends `${Blank}${infer R}` | `${infer R}${Blank}` ? Trim<R> : T;
+type trimed1 = Trim<'  Hello World  '>
+
+/**
+ * Capitalize
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00110-medium-capitalize/README.zh-CN.md
+ */
+
+type MCapitalize<T> = T extends `${infer F}${infer R}` ? `${Uppercase<F>}${R}` : T
