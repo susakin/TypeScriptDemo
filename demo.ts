@@ -1,67 +1,58 @@
 //https://github.com/type-challenges/type-challenges/blob/main/README.zh-CN.md
-//Pick
-type MyPick<T,K extends keyof T> = {
-  [key in K]: T[K]
-}
 
-//Readonly
-
-type MyReadonly<T> = {
-  readonly [K in keyof T] : T[K]
-}
-
-//TupleToObject
-
-type TupleToObject<T extends readonly any[]> = {
-  [K in  T[number]] : T[K]
-}
-
-type First<T extends any[]> = T extends [infer K ,...infer R] ? K : never;
+/**
+ * 最后一个元素
+ * https://github.com/susakin/type-challenges/blob/main/questions/00015-medium-last/README.zh-CN.md
+ */
+type Last<T> = T extends [...infer A, infer B] ? B : never;
+type tail = Last<['a', 'b', 'c']>
 
 
-type Length<T extends readonly any[]> = T['length']
+/**
+ * 出堆
+ * https://github.com/susakin/type-challenges/blob/main/questions/00016-medium-pop/README.zh-CN.md
+ */
 
-type MyExclude<T,U> = T extends U ? never : T;
+type Pop<T> =  T extends [...infer A, infer B] ? A : never;
+type re1 = Pop<['a', 'b', 'c', 'd']>
 
-type MyAwaited<T extends Promise<any>> = T extends Promise<infer U> ? U extends Promise<unknown> ? MyAwaited<U> : U : never;
+/**
+ * Promise.all
+ * https://github.com/susakin/type-challenges/blob/main/questions/00020-medium-promise-all/README.zh-CN.md
+ */
 
-type Unshift<T extends unknown[],U extends unknown> = [U,...T];
-
-
-type If<C extends boolean,T extends unknown , F extends unknown> = C extends true ? T : F;
-
-type Concat<T extends unknown[],U extends unknown[]> = [...T,...U];
-
-type MyParameters<T extends Function> = T extends ((...U:infer T) => unknown) ? [...T] : never;
-
-type MyReturnType<T > = T extends ((...A:any[]) => infer U) ? U : never;
-
-
-const fn = (v: boolean) => {
-  if (v)
-    return 1
-  else
-    return 2
-}
-
-type a = MyReturnType<typeof fn>
+declare function PromiseAll<T extends any[]>(values:readonly[...T]):Promise<{
+  [K in keyof T]: T[K] extends Promise<infer A> ? A : T[K];
+}>
 
 
-type MyOmit<T extends Record<string,any>,K extends keyof T> = {
-  [P in keyof T as P extends K ? never : P] : T[P]
-}
+/**
+ * Type Lookup
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00062-medium-type-lookup/README.md
+ */
 
-type MyReadonly2<T extends Record<string,any>,K extends keyof T> = {
-  readonly [P in keyof T ] : T[P]
-} & Omit<T,K>
-
-
-//keyof T extends never 判断是对象
-type DeepReadonly<T extends Record<string,any>> = {
-  readonly [K in keyof T] : keyof T[K] extends never ? T[K] : DeepReadonly<T[K]>;
-}
+type LookUp<U ,T> = U extends {type : T} ? U : never;
 
 
-type TupleToUnion<T> = T extends [infer R,...infer Rest] ? R | TupleToUnion<Rest> : never;
+/**
+ * Type Trim Left
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00106-medium-trimleft/README.zh-CN.md
+ */
+type TrimLeft<T> = T extends ` ${infer rest}` ? TrimLeft<rest> : T;
+type trimed = TrimLeft<'  Hello World  '>
 
-type Test = TupleToUnion<[1,2,3]>
+
+/**
+ * Trim
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00108-medium-trim/README.zh-CN.md
+ */
+type Blank = ' '|'\n' |'\t';
+type Trim<T> = T extends `${Blank}${infer R}` | `${infer R}${Blank}` ? Trim<R> : T;
+type trimed1 = Trim<'  Hello World  '>
+
+/**
+ * Capitalize
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00110-medium-capitalize/README.zh-CN.md
+ */
+
+type MCapitalize<T> = T extends `${infer F}${infer R}` ? `${Uppercase<F>}${R}` : T
