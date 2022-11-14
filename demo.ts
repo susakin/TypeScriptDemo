@@ -56,3 +56,20 @@ type trimed1 = Trim<'  Hello World  '>
  */
 
 type MCapitalize<T> = T extends `${infer F}${infer R}` ? `${Uppercase<F>}${R}` : T
+
+/**
+ * replace
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00116-medium-replace/README.zh-CN.md
+ */
+
+type Replace<T,F extends string,S extends string> = T extends `${infer A}${F}${infer B}` ? `${A}${S}${B}` : T;
+
+
+/**
+ * ReplaceAll
+ * https://github.com/type-challenges/type-challenges/blob/main/questions/00119-medium-replaceall/README.zh-CN.md
+ */
+
+ type ReplaceAll<T,F extends string,S extends string> = T extends `${infer A}${F}${infer B}` ? ReplaceAll<`${A}${S}${B}`,F,S> : T;
+
+ type replaced = ReplaceAll<'t y p e s', ' ', ''>
