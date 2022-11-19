@@ -73,3 +73,12 @@ type Replace<T,F extends string,S extends string> = T extends `${infer A}${F}${i
  type ReplaceAll<T,F extends string,S extends string> = T extends `${infer A}${F}${infer B}` ? ReplaceAll<`${A}${S}${B}`,F,S> : T;
 
  type replaced = ReplaceAll<'t y p e s', ' ', ''>
+
+ /**
+  * AppendArgument
+  * https://github.com/type-challenges/type-challenges/blob/main/questions/00191-medium-append-argument/README.zh-CN.md
+  */
+type AppendArgument<Fn extends Function,A> = Fn extends ((...arg:infer R) => infer G ) ? ((...arg:[...R,A]) => G) : never;
+type Fn = (a: number, b: string) => number
+
+type Result = AppendArgument<Fn, boolean> 
