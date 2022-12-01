@@ -183,3 +183,137 @@ type Merge<T,R> = {
    * DropSubStr
    */
   type DropSubstr<Str extends string,SubStr extends string> = Str extends `${infer Prefix}${SubStr}${infer Suffix}` ?  DropSubstr<`${Prefix}${Suffix}`,SubStr> : Str;
+
+
+  /**
+   * MinusOne
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02257-medium-minusone/README.zh-CN.md
+   */
+
+  type MinusOne<T,S extends unknown[] = []> = [1,...S]['length'] extends T ? S['length'] : MinusOne<T,[1,...S]>;
+
+  /**
+   * PickByType 
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02595-medium-pickbytype/README.md
+   */
+  type PickByType<T,S> = {
+    [K in keyof T as T[K] extends S ? K : never] : T[K]
+  }
+
+  /**
+   * StartsWith 
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02688-medium-startswith/README.zh-CN.md
+   */
+  type StartsWith<T,U extends string> = T extends `${U}${infer R}` ? true : false;
+
+  /**
+   * EndsWith
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02693-medium-endswith/README.zh-CN.md
+   */
+  type EndsWith<T,U extends string> = T extends `${infer R}${U}` ? true : false;
+
+  type merge<T> = {
+    [P in keyof T] : T[P]
+  }
+
+  /**
+   * PartialByKeys 
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02757-medium-partialbykeys/README.zh-CN.md
+   */
+  type PartialByKeys<T,K extends keyof T> = merge<{
+    [R in keyof T] : T[R]
+  } & {
+    [R in keyof T as R extends K ? R : never] ? : T[R]
+  }>
+
+  /**
+   * RequiredByKeys 
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02759-medium-requiredbykeys/README.zh-CN.md
+   */
+  type RequiredByKeys<T,K extends keyof T> = merge<{
+    [R in keyof T as R extends K ? never :R]  : T[R]
+  } &  {
+    [R in keyof T as R extends K ? R : never]-? : T[R]
+  }>
+  // interface User {
+  //   name?: string
+  //   age?: number
+  //   address?: string
+  // }
+  
+  // type UserRequiredName = RequiredByKeys<User, 'name'> 
+
+  /**
+   * Mutable 
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02793-medium-mutable/README.zh-CN.md
+   */
+
+  type Mutable<T extends object> = {
+    -readonly[P in keyof T] : T[P]
+  }
+
+  /**
+   * OmitByType
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02852-medium-omitbytype/README.md
+   */ 
+
+  type OmitByType<T,U> = {
+    [K in keyof T as T[K] extends U ? never : K] : T[K]
+  }
+
+  /**
+   * ObjectEntries
+   * https://github.com/type-challenges/type-challenges/blob/main/questions/02946-medium-objectentries/README.md
+   */
+  type ObjectEntries<T,K = keyof T> = K extends keyof T ? [K, T[K]] : never;
+
+  interface Model {
+    name: string;
+    age: number;
+    locations: string[] | null;
+  }
+  type modelEntries = ObjectEntries<Model>
+
+  /**
+   * Tuple to Nested Object
+   * https://github.com/susakin/type-challenges/blob/main/questions/03188-medium-tuple-to-nested-object/README.md
+   */
+
+  type TupleToNestedObject<T,U> = T extends [infer F extends string,...infer Rest] ? {
+    [P in F] : TupleToNestedObject<Rest,U>
+  } : U;
+
+  //type b = TupleToNestedObject<['a', 'b'], number> 
+
+  /**
+   * Reverse 
+   * https://github.com/susakin/type-challenges/blob/main/questions/03192-medium-reverse/README.zh-CN.md
+   */
+  type Reverse<T> = T extends [infer F,...infer Rest] ? [...Reverse<Rest>,F] : T;
+
+
+  /**
+   * Flip Arguments
+   * https://github.com/susakin/type-challenges/blob/main/questions/03196-medium-flip-arguments/README.md
+   */
+  type FlipArguments<T extends Function> = T extends ((...R: infer A) => infer U) ? ((...R:Reverse<A>) => U) : T;
+  type Flipped = FlipArguments<(arg0: string, arg1: number, arg2: boolean) => void> 
+
+  /**
+   * Flip 
+   * https://github.com/susakin/type-challenges/blob/main/questions/04179-medium-flip/README.md
+   */
+  type Flip<T extends Record<string,any>> = {
+    [K in keyof T as T[K] extends boolean ? `${T[K]}` : T[K]] : K
+  }
+
+  /**
+   *  DeepPromiseValueType
+   */
+
+  type DeepPromiseValueType<P extends Promise<unknown>> = P extends Promise<infer ValueType> ? ValueType extends Promise<unknown> ? DeepPromiseValueType<ValueType> : ValueType : never;
+
+  /**
+   * Includes
+   */
+  type Includes<Arr extends unknown[],FindItem> = Arr extends [infer First,...infer Rest] ? First extends FindItem ? true : Includes<Rest,FindItem> : false;
