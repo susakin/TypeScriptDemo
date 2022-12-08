@@ -317,3 +317,96 @@ type Merge<T,R> = {
    * Includes
    */
   type Includes<Arr extends unknown[],FindItem> = Arr extends [infer First,...infer Rest] ? First extends FindItem ? true : Includes<Rest,FindItem> : false;
+
+  /**
+   * Parameters
+   * 提取函数参数
+   */
+  type _Parameters<T extends ((...args:any) => any)> = T extends (...args:infer A) => any ? A : never;
+
+  /**
+   * ReturnType
+   * 提取函数返回类型
+   */
+  type _ReturnType<T extends (...args:any) => any> = T extends (...args:any) => infer A ? A : never;
+
+  /**
+   * ConstructorParameters
+   * 获取构造函数的参数
+   */
+  type _ConstructorParameters<T extends abstract new (...args:any) => any> = T extends abstract new (...args:infer A) => any ? A : never;
+
+
+  /**
+   * Partial
+   * 把索引变为可选
+   */
+  type _Partial<T> = {
+    [K in keyof T] ? : T[K]
+  }
+
+  /**
+   * Without
+   * https://github.com/susakin/type-challenges/blob/main/questions/05117-medium-Without/README.zh-CN.md
+   */
+  type ToUnion<T> = T extends any[] ? T[number] : T
+  type Without<T,U> = T extends [infer A,...infer Rest] ? A extends ToUnion<U> ? Without<Rest,U> : [A,...Without<Rest,U>] : T;
+  type Res2 = Without<[2, 3, 2, 3, 2, 3, 2, 3], [2, 3]>;
+
+  /**
+   * Join
+   * https://github.com/susakin/type-challenges/blob/main/questions/05310-medium-join/README.md
+   */
+  type Join<T ,U> = T extends [infer A,...infer Rest] ? Join<Rest,U> extends string ? `${A & string}${U & string}${Join<Rest,U> & string}` : A : T;
+  /**
+   * Construct Tuple
+   * https://github.com/susakin/type-challenges/blob/main/questions/07544-medium-construct-tuple/README.md
+   */
+   type ConstructTuple<T extends number,U extends unknown[] = []> = T extends U['length'] ? U : ConstructTuple<T,[unknown,...U]>;
+
+   /**
+    * KebabCaseToCamelCase
+    * 
+    */
+
+  type KebabCaseToCamelCase<T extends string> = T extends `${infer A}-${infer Rest}` ? `${A}${KebabCaseToCamelCase<Capitalize<Rest>>}` : T;
+
+  /**
+   * CamelCaseToKebabCase
+   */
+  type CamelCaseToKebabCase<T extends string> = T extends `${infer A}${infer Rest}` ? A extends Lowercase<A> ? `${A}${CamelCaseToKebabCase<Rest>}` : `${A}-${CamelCaseToKebabCase<Rest>}` : T;
+
+  /**
+   * TupleToNestedObject
+   */
+
+  type _TupleToNestedObject<T extends unknown[],U> = T extends [infer A,...infer Rest] ? {
+    [Key in keyof A as Key extends any ? Key : never] : Rest extends  unknown[] ? TupleToNestedObject<Rest,U> : U
+  } : U;
+
+  /**
+   * type DeepMutable
+   * https://github.com/type-challenges/type-challenges/issues/19989
+   */
+  type DeepMutable<T extends object> = {
+    -readonly [P in keyof T] : T[P] extends Function ? T[P] : T[P] extends object ? DeepMutable<T[P]> : T[P]
+  }
+  /**
+   * TrimRight
+   */
+  type TrimRight<T extends string> = T extends `${infer A} ` ? `${TrimRight<A>}` : T;
+
+  /**
+   * Unique 
+   * https://github.com/type-challenges/type-challenges/issues/14981
+   */
+  type InArray<T extends any[],U> = T extends [infer A,...infer Rest] ? Equal<A,U> extends true ? true : InArray<Rest,U> : false;
+  type Unique<T extends any[]> = T extends [infer A,...infer Rest] ? InArray<Rest,A> extends true ? Unique<Rest> : [A,...Unique<Rest>] : T;
+
+  /**
+   * NumberRange
+   * https://github.com/type-challenges/type-challenges/issues/20093
+   */
+  type LengthToArr<N,U extends unknown[] = [] > = U['length'] extends N ? U : LengthToArr<N,[...U,1]>;
+  type NumberRange<N,M,U extends unknown[] = LengthToArr<N>> = M extends U['length'] ? M : U['length'] | NumberRange<N,M,[...U,1]>
+  type res = NumberRange<2,9>
